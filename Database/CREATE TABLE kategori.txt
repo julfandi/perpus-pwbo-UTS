@@ -1,0 +1,55 @@
+CREATE TABLE kategori (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nama_kategori VARCHAR(100)
+);
+
+CREATE TABLE buku (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    judul VARCHAR(255),
+    penulis VARCHAR(100),
+    penerbit VARCHAR(100),
+    stok INT
+);
+
+CREATE TABLE anggota (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    nim VARCHAR(20) UNIQUE,
+    nama_anggota VARCHAR(100),
+    telepon VARCHAR(15)
+);
+
+CREATE TABLE peminjaman (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    buku_id INT,
+    anggota_id INT,
+    tgl_pinjam DATE,
+    tgl_kembali DATE,
+    status ENUM('dipinjam', 'kembali') DEFAULT 'dipinjam',
+    denda INT DEFAULT 0,
+    FOREIGN KEY (buku_id) REFERENCES buku(id),
+    FOREIGN KEY (anggota_id) REFERENCES anggota(id)
+);
+
+
+CREATE TABLE user (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(50) UNIQUE,
+    password VARCHAR(255),
+    nama_lengkap VARCHAR(100)
+);
+
+
+
+
+-- Hapus kolom kategori_id di tabel buku karena sudah tidak relevan
+ALTER TABLE buku DROP FOREIGN KEY buku_ibfk_1; -- Sesuaikan nama foreign key jika perlu
+ALTER TABLE buku DROP COLUMN kategori_id;
+
+-- Buat tabel penghubung (Pivot Table)
+CREATE TABLE buku_kategori (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    buku_id INT,
+    kategori_id INT,
+    FOREIGN KEY (buku_id) REFERENCES buku(id) ON DELETE CASCADE,
+    FOREIGN KEY (kategori_id) REFERENCES kategori(id) ON DELETE CASCADE
+);
